@@ -42,8 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);  // ❗비인증 요청은 그냥 통과시킴 (403 아님)
-            return;
+            log.warn("Authorization 헤더가 없거나 잘못된 형식입니다.");
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
         String token = authHeader.substring(7);
