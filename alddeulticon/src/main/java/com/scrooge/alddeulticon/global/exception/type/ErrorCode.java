@@ -16,6 +16,7 @@ public enum ErrorCode {
     // 401 UNAUTHORIZED
     UNAUTHORIZED(401, "A001", "인증되지 않은 사용자입니다."),
     INVALID_TOKEN(401, "A002", "유효하지 않은 토큰입니다."),
+    TOKEN_EXPIRED(401, "A003", "토큰이 만료되었습니다."),
 
     // 404 NOT_FOUND
     USER_NOT_FOUND(404, "U001", "사용자를 찾을 수 없습니다."),
