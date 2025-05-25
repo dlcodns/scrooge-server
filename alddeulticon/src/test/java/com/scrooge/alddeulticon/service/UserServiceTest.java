@@ -1,4 +1,4 @@
-package com.scrooge.alddeulticon;
+package com.scrooge.alddeulticon.service;
 
 import com.scrooge.alddeulticon.domain.user.dto.UserLoginRequestDto;
 import com.scrooge.alddeulticon.domain.user.dto.UserLoginResponseDto;
@@ -10,10 +10,8 @@ import com.scrooge.alddeulticon.global.exception.CustomException;
 import com.scrooge.alddeulticon.global.exception.type.ErrorCode;
 import com.scrooge.alddeulticon.global.security.JwtUtil;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;

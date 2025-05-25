@@ -17,6 +17,8 @@ public class CustomUserDetails implements UserDetails {
         this.user = user;
     }
 
+    public Long getId() {return user.getId();}
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 권한 미구현 상태면 비워두되 구조는 유지
