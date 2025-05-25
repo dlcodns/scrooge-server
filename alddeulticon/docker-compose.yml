@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   mysql:
     image: mysql:8.0
@@ -11,8 +13,8 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - scrooge_network
-    healthcheck: # 컨테이너 상태 확인
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}" ]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,6 +23,33 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - scrooge_network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - scrooge_network
 
   backend:
     build: .
@@ -33,15 +62,17 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      kafka:
+        condition: service_started
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql_scrooge:3306/${MYSQL_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
       APP_JWT_SECRET: ${APP_JWT_SECRET}
       APP_JWT_EXPIRATION_MS: ${APP_JWT_EXPIRATION_MS}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     networks:
       - scrooge_network
-
 
 volumes:
   mysql_data:
