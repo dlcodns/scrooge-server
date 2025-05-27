@@ -24,6 +24,10 @@ spring:
       name: none
       password: none
 
+server:
+  address: 0.0.0.0
+
+
 app:
   jwt:
     secret: ${APP_JWT_SECRET}
