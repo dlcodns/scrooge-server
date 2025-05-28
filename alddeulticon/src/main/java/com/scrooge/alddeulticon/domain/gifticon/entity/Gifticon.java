@@ -6,30 +6,28 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "gifticon")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Gifticon {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long giftcornNumber; // PK
+    @Column(nullable = false, unique = true)
+    private String gifticonNumber; // 🔑 PK
 
     @Column(nullable = false)
-    private String whoPost;       // 누가 올렸는지
+    private String whoPost;
 
     @Column(nullable = false)
-    private String whichRoom;     // 어느 방에서 올렸는지
+    private String whichRoom;
 
     @Column(nullable = false)
-    private LocalDate dueDate;    // 유효기간
+    private LocalDate dueDate;
 
     @Column(nullable = false)
-    private String brand;         // 브랜드
+    private String brand;
 
     @Column(nullable = false)
-    private String productName;   // 상품명
+    private String productName;
 }

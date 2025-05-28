@@ -16,12 +16,12 @@ public class GifticonService {
 
     public void save(GifticonRequestDto dto) {
         Gifticon gifticon = Gifticon.builder()
+                .gifticonNumber(dto.getGifticonNumber()) // ✅ 문자열 그대로 사용
                 .whoPost(dto.getWhoPost())
                 .whichRoom(dto.getWhichRoom() == null ? "defaultRoom" : dto.getWhichRoom())
                 .dueDate(LocalDate.parse(dto.getDueDate()))
                 .brand(dto.getBrand())
                 .productName(dto.getProductName() == null ? "" : dto.getProductName())
-                .giftcornNumber(Long.parseLong(dto.getGifticonNumber()))
                 .build();
 
         gifticonRepository.save(gifticon);
