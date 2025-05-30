@@ -18,9 +18,9 @@ public class Gifticon {
 
     @Column(nullable = false)
     private String whoPost;
-
-    @Column(nullable = false)
-    private String whichRoom;
+//
+//    @Column(nullable = false)
+//    private String whichRoom;
 
     @Column(nullable = false)
     private LocalDate dueDate;

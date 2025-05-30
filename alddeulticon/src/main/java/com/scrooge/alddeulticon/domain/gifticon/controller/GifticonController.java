@@ -23,7 +23,7 @@ public class GifticonController {
         Gifticon gifticon = Gifticon.builder()
                 .gifticonNumber(request.getGifticonNumber())
                 .whoPost(request.getWhoPost())
-                .whichRoom(request.getWhichRoom())
+//                .whichRoom(request.getWhichRoom())
                 .dueDate(LocalDate.parse(request.getDueDate()))
                 .brand(request.getBrand())
                 .productName(request.getProductName())
