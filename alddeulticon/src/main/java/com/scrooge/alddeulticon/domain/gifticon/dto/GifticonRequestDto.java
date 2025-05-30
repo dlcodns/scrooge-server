@@ -7,9 +7,7 @@ import lombok.Setter;
 @Setter
 public class GifticonRequestDto {
     private String gifticonNumber;
-    private String whoPost;
-//    private String whichRoom;
-    private String dueDate; // "2025-06-30" 형식
+    private String dueDate;
     private String brand;
-    private String productName;
 }
+

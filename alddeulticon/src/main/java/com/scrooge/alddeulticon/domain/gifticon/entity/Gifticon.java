@@ -11,23 +11,20 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Gifticon {
-
     @Id
     @Column(nullable = false, unique = true)
-    private String gifticonNumber; // 🔑 PK
+    private String gifticonNumber;
 
     @Column(nullable = false)
-    private String whoPost;
-//
-//    @Column(nullable = false)
-//    private String whichRoom;
+    private String posterUserId;
+
+    @Column(nullable = false)
+    private String posterNickname;
 
     @Column(nullable = false)
     private LocalDate dueDate;
 
     @Column(nullable = false)
     private String brand;
-
-    @Column(nullable = false)
-    private String productName;
 }
+

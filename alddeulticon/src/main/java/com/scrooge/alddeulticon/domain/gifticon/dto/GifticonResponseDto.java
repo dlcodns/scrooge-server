@@ -7,20 +7,18 @@ import lombok.Getter;
 public class GifticonResponseDto {
 
     private final String gifticonNumber;
-    private final String whoPost;
-//    private final String whichRoom;
+    private final String posterUserId;
+    private final String posterNickname;
     private final String dueDate;
     private final String brand;
-    private final String productName;
 
     public GifticonResponseDto(Gifticon gifticon) {
         this.gifticonNumber = gifticon.getGifticonNumber();
-        this.whoPost = gifticon.getWhoPost();
-//        this.whichRoom = gifticon.getWhichRoom();
+        this.posterUserId = gifticon.getPosterUserId();
+        this.posterNickname = gifticon.getPosterNickname();
         this.dueDate = gifticon.getDueDate() != null
                 ? gifticon.getDueDate().toString()
                 : null;
         this.brand = gifticon.getBrand();
-        this.productName = gifticon.getProductName();
     }
 }

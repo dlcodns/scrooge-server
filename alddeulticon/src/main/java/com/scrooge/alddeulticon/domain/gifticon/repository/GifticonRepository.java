@@ -6,7 +6,8 @@ import com.scrooge.alddeulticon.domain.gifticon.entity.Gifticon;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GifticonRepository extends JpaRepository<Gifticon, String> {
-    List<Gifticon> findByWhoPost(String whoPost); // ← 타입 맞춰서
+    List<Gifticon> findByPosterUserId(String posterUserId);
+
     Optional<Gifticon> findByGifticonNumber(String gifticonNumber);
 }
 
