@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/group")
+@RequestMapping("/api/group")
 public class GroupController {
 
     private final GroupService groupService;
@@ -32,4 +32,12 @@ public class GroupController {
         dto.setGroupId(groupId);
         groupService.addGifticonsToGroup(dto);
     }
+
+    // 4. 기존 그룹에 사용자 추가
+    @PostMapping("/{groupId}/add-users")
+    public void addUsersToGroup(@PathVariable Long groupId,
+                                @RequestBody GroupAddUsersRequestDto dto) {
+        groupService.addUsersToGroup(groupId, dto.getUserIds());
+    }
+
 }

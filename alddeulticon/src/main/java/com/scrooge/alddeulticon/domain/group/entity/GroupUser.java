@@ -1,14 +1,21 @@
 package com.scrooge.alddeulticon.domain.group.entity;
 
-import com.scrooge.alddeulticon.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import com.scrooge.alddeulticon.domain.group.entity.GroupRoom;
+import com.scrooge.alddeulticon.domain.user.entity.User;
+
 @Entity
 @Table(name = "group_user")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class GroupUser {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -18,4 +25,7 @@ public class GroupUser {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(nullable = false)
+    private String nickName;
 }

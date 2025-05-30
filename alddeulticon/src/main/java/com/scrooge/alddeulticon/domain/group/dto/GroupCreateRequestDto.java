@@ -2,8 +2,10 @@ package com.scrooge.alddeulticon.domain.group.dto;
 
 import lombok.*;
 
-@Getter @Setter
+import java.util.List;
+
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class GroupCreateRequestDto {
     private String roomName;
-    private Long userId;
+    private List<String> memberIds; // 👈 멤버 userId 리스트
 }

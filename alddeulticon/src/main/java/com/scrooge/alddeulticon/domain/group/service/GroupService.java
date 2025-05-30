@@ -24,16 +24,43 @@ public class GroupService {
 
     public void createGroup(GroupCreateRequestDto dto) {
         GroupRoom group = groupRoomRepository.save(new GroupRoom(null, dto.getRoomName()));
-        User user = userRepository.findById(dto.getUserId()).orElseThrow();
-        groupUserRepository.save(new GroupUser(null, group, user));
+
+        for (String userId : dto.getMemberIds()) {
+            User user = userRepository.findByUserId(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+
+            GroupUser groupUser = new GroupUser(null, group, user, user.getNickname()); // 👈 닉네임도 같이 저장
+            groupUserRepository.save(groupUser);
+        }
     }
 
+
+    public void addUsersToGroup(Long groupId, List<String> userIds) {
+        GroupRoom group = groupRoomRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group not found: " + groupId));
+
+        for (String userId : userIds) {
+            User user = userRepository.findByUserId(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+
+            // 이미 그룹에 있는지 확인 (중복 방지)
+            boolean exists = groupUserRepository.existsByGroupAndUser(group, user);
+            if (!exists) {
+                GroupUser groupUser = new GroupUser(null, group, user, user.getNickname());
+                groupUserRepository.save(groupUser);
+            }
+        }
+    }
+
+
+
+
     public List<GifticonResponseDto> getUserGifticons(Long userId) {
-        return gifticonRepository.findByWhoPost(userId).stream()
+        return gifticonRepository.findByWhoPost(userId.toString()).stream()
                 .map(g -> new GifticonResponseDto(
                         g.getGifticonNumber(),
                         g.getBrand(),
-                        g.getDueDate(),
+                        g.getDueDate().toString(),
                         g.getProductName(),
                         g.getWhoPost().toString()
                 ))

@@ -1,5 +1,6 @@
 package com.scrooge.alddeulticon.global.config;
 
+import org.springframework.http.HttpMethod;
 import com.scrooge.alddeulticon.global.security.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
