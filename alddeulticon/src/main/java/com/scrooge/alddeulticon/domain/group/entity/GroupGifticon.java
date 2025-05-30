@@ -16,6 +16,6 @@ public class GroupGifticon {
     private GroupRoom group;
 
     @ManyToOne
-    @JoinColumn(name = "gifticon_number")
+    @JoinColumn(name = "gifticon_number", referencedColumnName = "gifticonNumber", nullable = false)
     private Gifticon gifticon;
 }

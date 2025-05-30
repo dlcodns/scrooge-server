@@ -7,6 +7,7 @@ import com.scrooge.alddeulticon.domain.user.entity.User;
 import com.scrooge.alddeulticon.domain.user.repository.UserRepository;
 import com.scrooge.alddeulticon.domain.gifticon.entity.Gifticon;
 import com.scrooge.alddeulticon.domain.gifticon.repository.GifticonRepository;
+import com.scrooge.alddeulticon.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,56 +22,56 @@ public class GroupService {
     private final GroupGifticonRepository groupGifticonRepository;
     private final UserRepository userRepository;
     private final GifticonRepository gifticonRepository;
+    private final JwtUtil jwtUtil;
 
     public void createGroup(GroupCreateRequestDto dto) {
         GroupRoom group = groupRoomRepository.save(new GroupRoom(null, dto.getRoomName()));
-
         for (String userId : dto.getMemberIds()) {
             User user = userRepository.findByUserId(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
-
-            GroupUser groupUser = new GroupUser(null, group, user, user.getNickname()); // 👈 닉네임도 같이 저장
+            GroupUser groupUser = new GroupUser(null, group, user, user.getNickname());
             groupUserRepository.save(groupUser);
         }
     }
 
-
     public void addUsersToGroup(Long groupId, List<String> userIds) {
         GroupRoom group = groupRoomRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("Group not found: " + groupId));
-
         for (String userId : userIds) {
             User user = userRepository.findByUserId(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
-
-            // 이미 그룹에 있는지 확인 (중복 방지)
-            boolean exists = groupUserRepository.existsByGroupAndUser(group, user);
-            if (!exists) {
-                GroupUser groupUser = new GroupUser(null, group, user, user.getNickname());
-                groupUserRepository.save(groupUser);
+            if (!groupUserRepository.existsByGroupAndUser(group, user)) {
+                groupUserRepository.save(new GroupUser(null, group, user, user.getNickname()));
             }
         }
     }
 
+    public List<GifticonResponseDto> getGifticonsByUserIdOrToken(Long userId, String token, boolean isTokenBased) {
+        String resolvedUserId;
+        if (isTokenBased) {
+            resolvedUserId = jwtUtil.getUserIdFromToken(token);
+        } else {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            resolvedUserId = user.getUserId();
+        }
 
-
-
-    public List<GifticonResponseDto> getUserGifticons(Long userId) {
-        return gifticonRepository.findByWhoPost(userId.toString()).stream()
+        return gifticonRepository.findByPosterUserId(resolvedUserId).stream()
                 .map(g -> new GifticonResponseDto(
                         g.getGifticonNumber(),
                         g.getBrand(),
                         g.getDueDate().toString(),
-                        g.getProductName(),
-                        g.getWhoPost().toString()
+                        g.getPosterNickname()
                 ))
                 .collect(Collectors.toList());
     }
 
     public void addGifticonsToGroup(GroupGifticonAddRequestDto dto) {
-        GroupRoom group = groupRoomRepository.findById(dto.getGroupId()).orElseThrow();
+        GroupRoom group = groupRoomRepository.findById(dto.getGroupId())
+                .orElseThrow(() -> new RuntimeException("Group not found"));
         for (String gifticonNumber : dto.getGifticonNumbers()) {
-            Gifticon gifticon = gifticonRepository.findByGifticonNumber(gifticonNumber).orElseThrow();
+            Gifticon gifticon = gifticonRepository.findByGifticonNumber(gifticonNumber)
+                    .orElseThrow(() -> new RuntimeException("Gifticon not found: " + gifticonNumber));
             groupGifticonRepository.save(new GroupGifticon(null, group, gifticon));
         }
     }

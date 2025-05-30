@@ -2,6 +2,7 @@ package com.scrooge.alddeulticon.controller;
 
 import com.scrooge.alddeulticon.domain.group.dto.*;
 import com.scrooge.alddeulticon.domain.group.service.GroupService;
+import com.scrooge.alddeulticon.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class GroupController {
 
     private final GroupService groupService;
+    private final JwtUtil jwtUtil;
 
     // 1. 그룹 생성
     @PostMapping("/create")
@@ -20,17 +22,17 @@ public class GroupController {
         groupService.createGroup(dto);
     }
 
-    // 2. 사용자 소유 기프티콘 조회
+    // 2. 사용자 소유 기프티콘 조회 (PK 기반)
     @GetMapping("/{userId}/gifticons")
-    public List<GifticonResponseDto> getUserGifticons(@PathVariable Long userId) {
-        return groupService.getUserGifticons(userId);
+    public List<GifticonResponseDto> getUserGifticonsById(@PathVariable Long userId) {
+        return groupService.getGifticonsByUserIdOrToken(userId, null, false);
     }
 
-    // 3. 그룹에 기프티콘 추가
-    @PostMapping("/{groupId}/gifticons")
-    public void addGifticons(@PathVariable Long groupId, @RequestBody GroupGifticonAddRequestDto dto) {
-        dto.setGroupId(groupId);
-        groupService.addGifticonsToGroup(dto);
+    // 3. 로그인한 사용자(JWT) 기프티콘 조회
+    @GetMapping("/my-gifticons")
+    public List<GifticonResponseDto> getMyGifticons(@RequestHeader("Authorization") String tokenHeader) {
+        String token = tokenHeader.replace("Bearer ", "");
+        return groupService.getGifticonsByUserIdOrToken(null, token, true);
     }
 
     // 4. 기존 그룹에 사용자 추가
@@ -40,4 +42,9 @@ public class GroupController {
         groupService.addUsersToGroup(groupId, dto.getUserIds());
     }
 
+    // 5. 그룹에 기프티콘 추가
+    @PostMapping("/add-gifticons")
+    public void addGifticonsToGroup(@RequestBody GroupGifticonAddRequestDto dto) {
+        groupService.addGifticonsToGroup(dto);
+    }
 }
