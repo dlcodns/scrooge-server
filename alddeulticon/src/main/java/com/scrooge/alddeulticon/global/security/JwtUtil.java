@@ -45,10 +45,14 @@ public class JwtUtil {
     }
 
     public String getUserIdFromToken(String token) {
-        return extractUsername(token); // 또는 extractClaim(token, Claims::getSubject)
+        return extractUsername(token);
     }
 
-     public Claims extractAllClaims(String token) {
+    public String getUserId(String token) {
+        return extractUsername(token);
+    }
+
+    public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
