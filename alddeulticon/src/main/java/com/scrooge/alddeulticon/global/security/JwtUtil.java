@@ -48,6 +48,10 @@ public class JwtUtil {
         return extractUsername(token);
     }
 
+    public String getUserId(String token) {
+        return extractUsername(token);
+    }
+
     public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
