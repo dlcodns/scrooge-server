@@ -1,9 +1,6 @@
 package com.scrooge.alddeulticon.domain.user.service;
 
-import com.scrooge.alddeulticon.domain.user.dto.UserLoginRequestDto;
-import com.scrooge.alddeulticon.domain.user.dto.UserLoginResponseDto;
-import com.scrooge.alddeulticon.domain.user.dto.UserSignupRequestDto;
-import com.scrooge.alddeulticon.domain.user.dto.UserSignupResponseDto;
+import com.scrooge.alddeulticon.domain.user.dto.*;
 import com.scrooge.alddeulticon.domain.user.entity.User;
 import com.scrooge.alddeulticon.global.exception.type.ErrorCode;
 import com.scrooge.alddeulticon.domain.user.repository.UserRepository;
@@ -56,4 +53,12 @@ public class UserService {
 
         return new UserLoginResponseDto(user.getId(), user.getNickname(), token);
     }
+
+    public UserSearchResponseDto searchByUserId(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return new UserSearchResponseDto(user.getId(), user.getNickname());
+    }
+
 }

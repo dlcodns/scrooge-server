@@ -17,6 +17,8 @@ RUN ./gradlew dependencies --no-daemon || return 0
 # 프로젝트의 모든 파일을 컨테이너 내부로 복사
 COPY . .
 
+RUN chmod +x ./gradlew
+
 # 테스트는 제외하고 빌드
 RUN ./gradlew build -x test --no-daemon
 
