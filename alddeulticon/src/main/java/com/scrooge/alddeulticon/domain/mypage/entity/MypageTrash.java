@@ -1,7 +1,9 @@
 package com.scrooge.alddeulticon.domain.mypage.entity;
 
+import com.scrooge.alddeulticon.domain.gifticon.entity.Gifticon;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,8 +22,9 @@ public class MypageTrash {
     @Column(name = "user_id", nullable = false)
     private Long userId; // 누구의 휴지통인지
 
-    @Column(name = "giftcorn_id", nullable = false)
-    private Long giftcornId; // giftcorn의 PK 값 (그냥 숫자만 저장)
+    @ManyToOne
+    @JoinColumn(name = "gifticon_id", referencedColumnName = "gifticonNumber", nullable = false)
+    private Gifticon gifticon; // Gifticon 엔티티 참조
 
     @Column(name = "deleted_date")
     private LocalDateTime deletedDate; // 휴지통에 들어간 시점

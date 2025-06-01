@@ -1,7 +1,9 @@
 package com.scrooge.alddeulticon.domain.mypage.service;
 
-import com.scrooge.alddeulticon.domain.mypage.entity.MypageTrash;
+import com.scrooge.alddeulticon.domain.gifticon.entity.Gifticon;
+import com.scrooge.alddeulticon.domain.gifticon.repository.GifticonRepository;
 import com.scrooge.alddeulticon.domain.mypage.dto.MypageTrashResponseDto;
+import com.scrooge.alddeulticon.domain.mypage.entity.MypageTrash;
 import com.scrooge.alddeulticon.domain.mypage.repository.MypageTrashRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class MypageTrashService {
 
     private final MypageTrashRepository mypageTrashRepository;
+    private final GifticonRepository gifticonRepository;
 
     @Transactional(readOnly = true)
     public List<MypageTrashResponseDto> getAllTrashByUserId(Long userId) {
@@ -26,13 +29,16 @@ public class MypageTrashService {
     }
 
     @Transactional
-    public MypageTrashResponseDto addToTrash(Long userId, Long giftcornId, String whoUse) {
+    public MypageTrashResponseDto addToTrash(Long userId, String gifticonId, String whoUse) {
+        Gifticon gifticon = gifticonRepository.findByGifticonNumber(gifticonId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 gifticonId를 찾을 수 없습니다."));
+
         MypageTrash trash = MypageTrash.builder()
                 .userId(userId)
-                .giftcornId(giftcornId)
+                .gifticon(gifticon)
                 .deletedDate(LocalDateTime.now())
                 .whoUse(whoUse)
-                .usedDate(null)
+                .usedDate(LocalDateTime.now())
                 .build();
 
         mypageTrashRepository.save(trash);
@@ -40,13 +46,13 @@ public class MypageTrashService {
     }
 
     private MypageTrashResponseDto toDto(MypageTrash trash) {
-        MypageTrashResponseDto dto = new MypageTrashResponseDto();
-        dto.setId(trash.getId());
-        dto.setUserId(trash.getUserId());
-        dto.setGiftcornId(trash.getGiftcornId());
-        dto.setWhoUse(trash.getWhoUse());
-        dto.setDeletedDate(trash.getDeletedDate());
-        dto.setUsedDate(trash.getUsedDate());
-        return dto;
+        return MypageTrashResponseDto.builder()
+                .id(trash.getId())
+                .gifticonId(trash.getGifticon().getGifticonNumber())
+                .gifticonName(trash.getGifticon().getBrand())
+                .whoUse(trash.getWhoUse())
+                .deletedDate(trash.getDeletedDate())
+                .usedDate(trash.getUsedDate())
+                .build();
     }
 }

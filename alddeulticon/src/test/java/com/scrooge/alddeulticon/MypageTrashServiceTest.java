@@ -1,7 +1,7 @@
 package com.scrooge.alddeulticon;
 
-import com.scrooge.alddeulticon.domain.giftcorn.entity.Giftcorn;
-import com.scrooge.alddeulticon.domain.giftcorn.repository.GiftcornRepository;
+import com.scrooge.alddeulticon.domain.gifticon.entity.Gifticon;
+import com.scrooge.alddeulticon.domain.gifticon.repository.GifticonRepository;
 import com.scrooge.alddeulticon.domain.mypage.dto.MypageTrashResponseDto;
 import com.scrooge.alddeulticon.domain.mypage.entity.MypageTrash;
 import com.scrooge.alddeulticon.domain.mypage.repository.MypageTrashRepository;
@@ -29,7 +29,7 @@ public class MypageTrashServiceTest {
     private MypageTrashService mypageTrashService;
 
     @Autowired
-    private GiftcornRepository giftcornRepository;
+    private GifticonRepository gifticonRepository;
 
     @Autowired
     private MypageTrashRepository mypageTrashRepository;
@@ -39,28 +39,28 @@ public class MypageTrashServiceTest {
         // given
         Long userId = 1L;
 
-        Giftcorn giftcorn = Giftcorn.builder()
-                .whoPost("테스터")
-                .whichRoom("테스트방")
+        Gifticon gifticon = Gifticon.builder()
+                .posterUserId("tester")
+                .posterNickname("Tester")
                 .dueDate(LocalDate.now().plusDays(10))
                 .brand("TestBrand")
-                .productName("TestProduct")
                 .build();
-        giftcorn = giftcornRepository.save(giftcorn);
+        gifticon.setGifticonNumber("GIFT123456"); // @Id로 사용되는 값이라고 가정
+        gifticon = gifticonRepository.save(gifticon);
 
         // when
         MypageTrashResponseDto response = mypageTrashService.addToTrash(
                 userId,
-                giftcorn.getGiftcornNumber(),  // giftcornId와 일치
+                gifticon.getGifticonNumber(),
                 "사용자"
         );
 
         // then
         assertNotNull(response);
-        assertEquals(userId, response.getUserId());
-        assertEquals(giftcorn.getGiftcornNumber(), response.getGiftcornId());
+        assertEquals("GIFT123456", response.getGifticonId());
+        assertEquals("사용자", response.getWhoUse());
         assertNotNull(response.getDeletedDate());
-        assertNull(response.getUsedDate());  // 명시적으로 null 확인
+        assertNull(response.getUsedDate());
     }
 
     @Test
@@ -68,20 +68,20 @@ public class MypageTrashServiceTest {
         // given
         Long userId = 1L;
 
-        Giftcorn giftcorn = Giftcorn.builder()
-                .whoPost("테스터2")
-                .whichRoom("테스트방2")
+        Gifticon gifticon = Gifticon.builder()
+                .posterUserId("tester2")
+                .posterNickname("Tester2")
                 .dueDate(LocalDate.now().plusDays(5))
                 .brand("Brand2")
-                .productName("Product2")
                 .build();
-        giftcorn = giftcornRepository.save(giftcorn);
+        gifticon.setGifticonNumber("GIFT654321");
+        gifticon = gifticonRepository.save(gifticon);
 
         MypageTrash trash = MypageTrash.builder()
                 .userId(userId)
-                .giftcornId(giftcorn.getGiftcornNumber())
+                .gifticon(gifticon)
                 .deletedDate(LocalDateTime.now())
-                .whoUse("테스터2")
+                .whoUse("Tester2")
                 .build();
         mypageTrashRepository.save(trash);
 
@@ -91,9 +91,10 @@ public class MypageTrashServiceTest {
         // then
         assertNotNull(result);
         assertFalse(result.isEmpty());
+
         MypageTrashResponseDto dto = result.get(0);
-        assertEquals(userId, dto.getUserId());
-        assertEquals(giftcorn.getGiftcornNumber(), dto.getGiftcornId());
+        assertEquals("GIFT654321", dto.getGifticonId());
+        assertEquals("Tester2", dto.getWhoUse());
         assertNotNull(dto.getDeletedDate());
     }
 }
