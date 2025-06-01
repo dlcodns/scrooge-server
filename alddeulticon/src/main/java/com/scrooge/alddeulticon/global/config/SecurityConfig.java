@@ -1,5 +1,6 @@
 package com.scrooge.alddeulticon.global.config;
 
+import org.springframework.http.HttpMethod;
 import com.scrooge.alddeulticon.global.security.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,9 +28,10 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable()) // 기본 인증 제거
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/signup", "/api/users/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/gifticons").permitAll() // ✅ 여기에 추가!
                         .anyRequest().authenticated()
                 )
-                // JWT 필터를 UsernamePasswordAuthenticationFilter 전에 등록
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new AuthenticationEntryPoint() {
