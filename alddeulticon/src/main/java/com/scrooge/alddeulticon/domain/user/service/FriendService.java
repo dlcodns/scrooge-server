@@ -1,5 +1,7 @@
 package com.scrooge.alddeulticon.domain.user.service;
 
+import com.scrooge.alddeulticon.domain.preference.entity.UserPreference;
+import com.scrooge.alddeulticon.domain.preference.repository.UserPreferenceRepository;
 import com.scrooge.alddeulticon.domain.user.dto.FriendRequestDecisionDto;
 import com.scrooge.alddeulticon.domain.user.dto.FriendRequestDto;
 import com.scrooge.alddeulticon.domain.user.dto.UserFriendDto;
@@ -12,24 +14,28 @@ import com.scrooge.alddeulticon.domain.user.repository.FriendshipRepository;
 import com.scrooge.alddeulticon.domain.user.repository.UserRepository;
 import com.scrooge.alddeulticon.global.exception.CustomException;
 import com.scrooge.alddeulticon.global.exception.type.ErrorCode;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FriendService {
 
     private final UserRepository userRepository;
     private final FriendRequestRepository friendRequestRepository;
     private final FriendshipRepository friendshipRepository;
-
+    private final UserPreferenceRepository userPreferenceRepository;
     public void sendFriendRequest(Long senderId, FriendRequestDto dto) {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        User receiver = userRepository.findById(dto.getReceiverId())
+        User receiver = userRepository.findByUserId(dto.getReceiverUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
 
         if (sender.equals(receiver)) {
             throw new CustomException(ErrorCode.SELF_REQUEST);
@@ -55,7 +61,10 @@ public class FriendService {
     public void acceptFriendRequest(Long userId, FriendRequestDecisionDto dto) {
         FriendRequest request = friendRequestRepository.findById(dto.getRequestId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REQUEST));
-
+        System.out.println("➡️ 요청 ID: " + dto.getRequestId());
+        System.out.println("➡️ 요청 수신자 ID: " + (request.getReceiver() != null ? request.getReceiver().getId() : "null"));
+        System.out.println("➡️ 로그인한 사용자 ID: " + userId);
+        System.out.println("➡️ 요청 발신자 ID: " + (request.getSender() != null ? request.getSender().getId() : "null"));
         // 요청의 수신자인지 확인
         if (!request.getReceiver().getId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
@@ -92,8 +101,24 @@ public class FriendService {
         List<Friendship> friendships = friendshipRepository.findAllByUserId(userId);
 
         return friendships.stream()
-                .map(f -> new UserFriendDto(f.getFriend().getId(), f.getFriend().getNickname()))
+                .map(f -> {
+                    User friend = f.getFriend();
+
+                    // 선호도 1~3 가져오기
+                    Optional<UserPreference> prefOpt = userPreferenceRepository.findByUserId(friend.getId());
+
+                    List<String> preferences = prefOpt.map(pref -> List.of(
+                            pref.getFirst().getName(),
+                            pref.getSecond().getName(),
+                            pref.getThird().getName()
+                    )).orElse(List.of()); // 없으면 빈 리스트
+
+                    return new UserFriendDto(friend.getId(), friend.getNickname(), preferences);
+                })
                 .toList();
     }
+
+
+
 
 }

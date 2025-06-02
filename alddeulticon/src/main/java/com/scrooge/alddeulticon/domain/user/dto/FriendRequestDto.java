@@ -10,5 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FriendRequestDto {
-    private Long receiverId;
+    private String receiverUserId;
 }

@@ -17,9 +17,11 @@ public class FriendRequest {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id")
     private User receiver;
 
     @Enumerated(EnumType.STRING)
