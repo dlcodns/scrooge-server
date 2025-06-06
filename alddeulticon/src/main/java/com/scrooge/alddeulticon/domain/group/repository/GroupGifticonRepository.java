@@ -11,4 +11,5 @@ public interface GroupGifticonRepository extends JpaRepository<GroupGifticon, Lo
 
     @Query("SELECT gg FROM GroupGifticon gg WHERE gg.group.id IN :groupIds")
     List<GroupGifticon> findByGroupIds(@Param("groupIds") List<Long> groupIds);
+
 }

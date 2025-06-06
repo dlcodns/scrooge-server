@@ -1,5 +1,4 @@
 package com.scrooge.alddeulticon.domain.gifticon.repository;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -14,7 +13,5 @@ public interface GifticonRepository extends JpaRepository<Gifticon, String> {
     Optional<Gifticon> findByGifticonNumber(String gifticonNumber);
 
     List<Gifticon> findAllByGifticonNumberIn(@Param("numbers") Set<String> numbers);
-
-
 }
 
