@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/friends")
@@ -20,10 +21,16 @@ public class FriendController {
     private final FriendService friendService;
 
     @PostMapping("/request")
-    public ResponseEntity<String> requestFriend(@RequestBody FriendRequestDto dto,
-                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
-        friendService.sendFriendRequest(userDetails.getId(), dto);
-        return ResponseEntity.ok("친구 요청이 전송되었습니다.");
+    public ResponseEntity<?> requestFriend(@RequestBody FriendRequestDto dto,
+                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long requestId = friendService.sendFriendRequest(userDetails.getId(), dto);
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "message", "친구 요청이 전송되었습니다.",
+                        "requestId", requestId
+                )
+        );
     }
 
     @PostMapping("/accept")
