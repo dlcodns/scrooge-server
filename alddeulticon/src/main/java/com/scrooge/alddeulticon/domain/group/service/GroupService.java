@@ -75,4 +75,21 @@ public class GroupService {
             groupGifticonRepository.save(new GroupGifticon(null, group, gifticon));
         }
     }
+
+    public List<GroupRoomResponseDto> getMyGroupRooms(String token) {
+        String userId = jwtUtil.getUserIdFromToken(token);
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<GroupUser> groupUsers = groupUserRepository.findByUser(user);
+
+        return groupUsers.stream()
+                .map(gu -> new GroupRoomResponseDto(
+                        gu.getGroup().getId(),
+                        gu.getGroup().getRoomName()
+                ))
+
+                .collect(Collectors.toList());
+
+    }
 }
