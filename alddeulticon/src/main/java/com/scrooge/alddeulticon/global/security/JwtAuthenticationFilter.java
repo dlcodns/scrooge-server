@@ -43,7 +43,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.warn("Authorization 헤더가 없거나 잘못된 형식입니다.");
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
+            filterChain.doFilter(request, response);
+            return;
         }
 
         String token = authHeader.substring(7);
@@ -64,17 +65,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             });
 
-            filterChain.doFilter(request, response);
-
         } catch (ExpiredJwtException e) {
             log.warn("JWT 만료: {}", e.getMessage());
             throw new CustomException(ErrorCode.TOKEN_EXPIRED);
-        }
-        catch (JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException e) {
             log.warn("JWT 에러: {}", e.getMessage());
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
+        filterChain.doFilter(request, response); // ✅ 여기서도 잊지 말고 호출
     }
+
 
 }

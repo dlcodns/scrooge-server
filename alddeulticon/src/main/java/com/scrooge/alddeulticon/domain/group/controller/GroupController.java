@@ -47,4 +47,12 @@ public class GroupController {
     public void addGifticonsToGroup(@RequestBody GroupGifticonAddRequestDto dto) {
         groupService.addGifticonsToGroup(dto);
     }
+
+    // 6. 로그인한 사용자의 그룹방 목록 조회
+    @GetMapping("/my-rooms")
+    public List<GroupRoomResponseDto> getMyGroupRooms(@RequestHeader("Authorization") String tokenHeader) {
+        String token = tokenHeader.replace("Bearer ", "");
+        return groupService.getMyGroupRooms(token);
+    }
+
 }
