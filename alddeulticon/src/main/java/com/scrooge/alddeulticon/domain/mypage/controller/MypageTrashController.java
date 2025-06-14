@@ -44,10 +44,12 @@ public class MypageTrashController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getUser().getId();
+        String nickname = userDetails.getUser().getNickname(); // ✅ 안전하게 서버에서 가져옴
+
         MypageTrashResponseDto saved = mypageTrashService.addToTrash(
                 userId,
                 dto.getGifticonId(),
-                dto.getWhoUse()
+                nickname
         );
         return ResponseEntity.ok(saved);
     }
