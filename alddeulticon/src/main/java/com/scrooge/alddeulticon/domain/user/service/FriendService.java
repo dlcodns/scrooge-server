@@ -1,5 +1,8 @@
 package com.scrooge.alddeulticon.domain.user.service;
 
+import com.scrooge.alddeulticon.domain.alarm.dto.NotificationRequestDto;
+import com.scrooge.alddeulticon.domain.alarm.producer.NotificationProducer;
+import com.scrooge.alddeulticon.domain.alarm.type.NotificationType;
 import com.scrooge.alddeulticon.domain.preference.entity.UserPreference;
 import com.scrooge.alddeulticon.domain.preference.repository.UserPreferenceRepository;
 import com.scrooge.alddeulticon.domain.user.dto.FriendRequestDecisionDto;
@@ -16,6 +19,7 @@ import com.scrooge.alddeulticon.global.exception.CustomException;
 import com.scrooge.alddeulticon.global.exception.type.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jmx.export.notification.NotificationPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,12 +34,15 @@ public class FriendService {
     private final FriendRequestRepository friendRequestRepository;
     private final FriendshipRepository friendshipRepository;
     private final UserPreferenceRepository userPreferenceRepository;
-    public void sendFriendRequest(Long senderId, FriendRequestDto dto) {
+    private final NotificationProducer notificationProducer;
+
+    public Long sendFriendRequest(Long senderId, FriendRequestDto dto) {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         User receiver = userRepository.findByUserId(dto.getReceiverUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        //Long receiverDbId = receiver.getId();
 
         if (sender.equals(receiver)) {
             throw new CustomException(ErrorCode.SELF_REQUEST);
@@ -56,7 +63,17 @@ public class FriendService {
                 .build();
 
         friendRequestRepository.save(request);
+
+        notificationProducer.send(new NotificationRequestDto(
+                NotificationType.FRIEND_REQUEST,
+                sender.getNickname() + "님이 친구 요청을 보냈어요!",
+                sender.getId(),
+                receiver.getId(),
+                request.getId()
+        ));
+        return request.getId();
     }
+
 
     public void acceptFriendRequest(Long userId, FriendRequestDecisionDto dto) {
         FriendRequest request = friendRequestRepository.findById(dto.getRequestId())

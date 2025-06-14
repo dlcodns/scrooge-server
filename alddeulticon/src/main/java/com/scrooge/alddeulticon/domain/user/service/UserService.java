@@ -51,7 +51,13 @@ public class UserService {
         // 토큰 생성 및 DTO 반환
         String token = jwtUtil.generateToken(user.getUserId());
 
-        return new UserLoginResponseDto(user.getId(), user.getNickname(), token);
+        return new UserLoginResponseDto(
+                user.getId(),           // DB PK
+                user.getUserId(),       // 비즈니스 ID
+                user.getNickname(),
+                token
+        );
+
     }
 
     public UserSearchResponseDto searchByUserId(String userId) {
