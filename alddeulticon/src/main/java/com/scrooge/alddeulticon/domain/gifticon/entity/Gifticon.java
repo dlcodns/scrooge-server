@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Gifticon {
+
     @Id
     @Column(nullable = false, unique = true)
     private String gifticonNumber;
@@ -26,5 +27,7 @@ public class Gifticon {
 
     @Column(nullable = false)
     private String brand;
-}
 
+    @Column(nullable = true)
+    private String imageUrl;
+}

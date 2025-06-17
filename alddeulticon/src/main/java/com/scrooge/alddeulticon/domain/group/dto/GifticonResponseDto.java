@@ -8,4 +8,5 @@ public class GifticonResponseDto {
     private String brand;
     private String dueDate;
     private String poster_nickname;
+    private String imageUrl;
 }

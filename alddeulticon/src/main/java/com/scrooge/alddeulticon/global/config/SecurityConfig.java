@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/signup", "/api/users/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/gifticons").permitAll() // ✅ 여기에 추가!
+                        .requestMatchers("/static/**").permitAll()
                         .anyRequest().authenticated()
                 )
 

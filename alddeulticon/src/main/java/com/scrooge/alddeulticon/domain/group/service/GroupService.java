@@ -65,7 +65,8 @@ public class GroupService {
                         g.getGifticonNumber(),
                         g.getBrand(),
                         g.getDueDate().toString(),
-                        g.getPosterNickname()
+                        g.getPosterNickname(),
+                        g.getImageUrl()
                 ))
                 .collect(Collectors.toList());
     }
@@ -115,7 +116,8 @@ public class GroupService {
                             g.getGifticonNumber(),
                             g.getBrand(),
                             g.getDueDate().toString(),
-                            g.getPosterNickname()
+                            g.getPosterNickname(),
+                            g.getImageUrl()
                     );
                 })
                 .collect(Collectors.toList());

@@ -1,5 +1,6 @@
 package com.scrooge.alddeulticon.domain.gifticon.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scrooge.alddeulticon.domain.gifticon.dto.GifticonRequestDto;
 import com.scrooge.alddeulticon.domain.gifticon.dto.GifticonResponseDto;
 import com.scrooge.alddeulticon.domain.gifticon.entity.Gifticon;
@@ -9,10 +10,15 @@ import com.scrooge.alddeulticon.domain.user.repository.UserRepository;
 import com.scrooge.alddeulticon.global.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/gifticon")
@@ -24,13 +30,47 @@ public class GifticonController {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-    @PostMapping
-    public ResponseEntity<?> saveGifticon(@RequestBody GifticonRequestDto request,
-                                          @RequestHeader("Authorization") String tokenHeader) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> saveGifticonWithImage(
+            @RequestPart("data") String data,
+            @RequestPart("file") MultipartFile file,
+            @RequestHeader("Authorization") String tokenHeader) {
+
         String token = tokenHeader.replace("Bearer ", "");
         String userId = jwtUtil.extractUsername(token);
 
+        // 1. JSON 문자열을 DTO로 파싱
+        GifticonRequestDto request;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            request = mapper.readValue(data, GifticonRequestDto.class);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("JSON 파싱 실패");
+        }
+
+        // 2. 이미지 저장
+        String uploadDir = System.getProperty("user.dir") + "/uploads/";
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();  // uploads 디렉토리 없으면 생성
+        }
+
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        File dest = new File(uploadDir + filename);
+
+        try {
+            file.transferTo(dest);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("이미지 저장 실패");
+        }
+
+        // 3. 이미지 URL 설정
+        String imageUrl = "/static/" + filename;
+        request.setImageUrl(imageUrl);
+
+        // 4. 저장
         gifticonService.save(request, userId);
+
         return ResponseEntity.ok("기프티콘 저장 성공");
     }
 

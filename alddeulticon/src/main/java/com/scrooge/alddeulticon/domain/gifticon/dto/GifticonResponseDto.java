@@ -11,6 +11,7 @@ public class GifticonResponseDto {
     private final String posterNickname;
     private final String dueDate;
     private final String brand;
+    private final String imageUrl; // 🔹 추가
 
     public GifticonResponseDto(Gifticon gifticon) {
         this.gifticonNumber = gifticon.getGifticonNumber();
@@ -20,5 +21,6 @@ public class GifticonResponseDto {
                 ? gifticon.getDueDate().toString()
                 : null;
         this.brand = gifticon.getBrand();
+        this.imageUrl = gifticon.getImageUrl(); // 🔹 추가
     }
 }

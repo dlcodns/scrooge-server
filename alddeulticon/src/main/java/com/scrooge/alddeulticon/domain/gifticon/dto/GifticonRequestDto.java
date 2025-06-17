@@ -9,5 +9,6 @@ public class GifticonRequestDto {
     private String gifticonNumber;
     private String dueDate;
     private String brand;
+    private String imageUrl;
 }
 
