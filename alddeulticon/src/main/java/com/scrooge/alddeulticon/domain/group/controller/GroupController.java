@@ -23,7 +23,7 @@ public class GroupController {
     }
 
     // 2. 사용자 소유 기프티콘 조회 (PK 기반)
-    @GetMapping("/{userId}/gifticons")
+    @GetMapping("/{userId}/user_gifticons")
     public List<GifticonResponseDto> getUserGifticonsById(@PathVariable Long userId) {
         return groupService.getGifticonsByUserIdOrToken(userId, null, false);
     }
@@ -54,5 +54,24 @@ public class GroupController {
         String token = tokenHeader.replace("Bearer ", "");
         return groupService.getMyGroupRooms(token);
     }
+
+    // 7. 그룹에 속한 기프티콘 목록 조회
+    @GetMapping("/{groupId}/group_gifticons")
+    public List<GifticonResponseDto> getGifticonsByGroup(
+            @PathVariable Long groupId,
+            @RequestHeader("Authorization") String tokenHeader) {
+        String token = tokenHeader.replace("Bearer ", "").trim();
+        return groupService.getGifticonsByGroup(groupId, token);
+    }
+
+    // 8. 그룹 ID로 그룹 이름 조회
+    @GetMapping("/{groupId}/name")
+    public GroupNameResponseDto getGroupNameById(
+            @PathVariable Long groupId,
+            @RequestHeader("Authorization") String tokenHeader) {
+        String token = tokenHeader.replace("Bearer ", "");
+        return groupService.getGroupNameById(groupId, token);
+    }
+
 
 }

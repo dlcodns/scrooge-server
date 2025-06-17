@@ -10,6 +10,8 @@ import com.scrooge.alddeulticon.domain.gifticon.repository.GifticonRepository;
 import com.scrooge.alddeulticon.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class GroupService {
+    private static final Logger log = LoggerFactory.getLogger(GroupService.class);
+
     private final GroupRoomRepository groupRoomRepository;
     private final GroupUserRepository groupUserRepository;
     private final GroupGifticonRepository groupGifticonRepository;
@@ -88,8 +92,49 @@ public class GroupService {
                         gu.getGroup().getId(),
                         gu.getGroup().getRoomName()
                 ))
-
                 .collect(Collectors.toList());
-
     }
+
+    public List<GifticonResponseDto> getGifticonsByGroup(Long groupId, String token) {
+        String userId = jwtUtil.getUserIdFromToken(token);
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        GroupRoom group = groupRoomRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        boolean isMember = groupUserRepository.existsByGroupAndUser(group, user);
+        if (!isMember) {
+            throw new RuntimeException("Access denied: Not a member of group");
+        }
+
+        return groupGifticonRepository.findByGroup(group).stream()
+                .map(gg -> {
+                    Gifticon g = gg.getGifticon();
+                    return new GifticonResponseDto(
+                            g.getGifticonNumber(),
+                            g.getBrand(),
+                            g.getDueDate().toString(),
+                            g.getPosterNickname()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    public GroupNameResponseDto getGroupNameById(Long groupId, String token) {
+        String userId = jwtUtil.getUserIdFromToken(token);
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        GroupRoom group = groupRoomRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        boolean isMember = groupUserRepository.existsByGroupAndUser(group, user);
+        if (!isMember) {
+            throw new RuntimeException("Access denied: Not a member of the group");
+        }
+
+        return new GroupNameResponseDto(group.getRoomName());
+    }
+
 }
