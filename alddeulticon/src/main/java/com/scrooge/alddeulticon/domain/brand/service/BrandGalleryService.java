@@ -43,8 +43,12 @@ public class BrandGalleryService {
         Set<String> allNumbers = new HashSet<>(groupGifticonNumbers);
         allNumbers.addAll(myGifticonNumbers);
 
-        // 5. 번호 기반으로 기프티콘 조회
-        List<Gifticon> gifticons = gifticonRepository.findAllByGifticonNumberIn(allNumbers);
+        // 5. 번호 기반으로 기프티콘 조회 (예외 방어 추가)
+        List<Gifticon> gifticons = allNumbers.stream()
+                .map(gifticonRepository::findByGifticonNumber)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
 
         // 6. 브랜드별로 DTO 변환 및 그룹화
         Map<String, List<BrandGifticonDto>> grouped = gifticons.stream()
