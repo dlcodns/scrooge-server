@@ -27,5 +27,5 @@ public class GroupUser {
     private User user;
 
     @Column(nullable = false)
-    private String nickName;
+    private String nickname;
 }

@@ -73,5 +73,13 @@ public class GroupController {
         return groupService.getGroupNameById(groupId, token);
     }
 
+    //9.  멤버 조회
+    @GetMapping("/{groupId}/members")
+    public List<MemberResponseDto> getGroupMembers(
+            @PathVariable Long groupId,
+            @RequestHeader("Authorization") String tokenHeader) {
+        String token = tokenHeader.replace("Bearer ", "");
+        return groupService.getGroupMembers(groupId, token);
+    }
 
 }

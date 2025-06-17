@@ -139,4 +139,22 @@ public class GroupService {
         return new GroupNameResponseDto(group.getRoomName());
     }
 
+    public List<MemberResponseDto> getGroupMembers(Long groupId, String token) {
+        String userId = jwtUtil.getUserIdFromToken(token);
+        User requester = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        GroupRoom group = groupRoomRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        boolean isMember = groupUserRepository.existsByGroupAndUser(group, requester);
+        if (!isMember) {
+            throw new RuntimeException("Not a member of this group");
+        }
+
+        return groupUserRepository.findByGroup(group).stream()
+                .map(gu -> new MemberResponseDto(gu.getUser().getUserId(), gu.getNickname()))
+                .toList();
+    }
+
 }
