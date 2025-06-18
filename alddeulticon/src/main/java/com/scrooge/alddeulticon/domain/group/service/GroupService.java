@@ -66,6 +66,7 @@ public class GroupService {
                         g.getBrand(),
                         g.getDueDate().toString(),
                         g.getPosterNickname(),
+                        g.getPosterUserId(),
                         g.getImageUrl()
                 ))
                 .collect(Collectors.toList());
@@ -117,6 +118,7 @@ public class GroupService {
                             g.getBrand(),
                             g.getDueDate().toString(),
                             g.getPosterNickname(),
+                            g.getPosterUserId(),
                             g.getImageUrl()
                     );
                 })
