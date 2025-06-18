@@ -1,11 +1,12 @@
 # 알뜰티콘 (SCROOGE)
 
 충북대학교 컴퓨터공학과 25년 1학기 개신프론티어 교과목 프로젝트
-</br/>
+<br>
+<br>
 
 ## 📚 프로젝트 소개
 
-**알뜰티콘**은 사용자가 소유한 기프티콘을 쉽게 관리하고, 친구 및 그룹을 통해 공유할 수 있도록 도와주는 웹 애플리케이션입니다.
+알뜰티콘은 사용자가 소유한 기프티콘을 쉽게 관리하고, 친구 및 그룹을 통해 공유할 수 있도록 도와주는 웹 애플리케이션입니다.
 
 - 기프티콘 정보 등록 및 관리 (OCR 활용)
 - 친구 시스템을 통한 기프티콘 공유
@@ -13,7 +14,7 @@
 - 브랜드별 갤러리 기능 제공
 - 실시간 알림 기능 (Kafka 기반)
 
-
+<br>
 
 ## 🔖 주요 기능
 
@@ -33,13 +34,15 @@
 - Kafka + WebSocket 기반 실시간 알림 전송
 - 친구 요청, 그룹 초대 등 실시간 알림 제공
 
-
+<br>
 
 ## 🏛️ 시스템 아키텍처
 
-![architecture](https://github.com/YourRepo/assets/architecture.png)
+<p align="center">
+  <img src="assets/systemArchitecture.png" width="600px"/>
+</p>
 
-
+<br>
 
 ## ⚙️ 기술 스택
 
@@ -53,20 +56,17 @@
 | 인증 방식 | JWT 기반 (Refresh Token 미사용) |
 
 
-
+<br>
 
 
 ## 🎞️ 시연 영상
 
-👉 [시연 영상 링크 넣기]
+👉 https://youtu.be/n2gaFwPn6ns
 
-
+<br>
 
 ## 👨‍👩‍👧‍👦 프로젝트 팀원
 
 | 박형우 (팀장) | 송영은 | 이채운 |
 | --- | --- | --- |
 |<a href="https://github.com/Bakhyoungwoo"><img src="https://avatars.githubusercontent.com/u/133998107?v=4" width="90px" height="90px"/></a>|<a href="https://github.com/songyeongeun"><img src="https://avatars.githubusercontent.com/u/107869024?v=4" width="90px" height="90px"/></a>|<a href="https://github.com/dlcodns"><img src="https://avatars.githubusercontent.com/u/111529749?v=4" width="90px" height="90px"/></a>|
-
-
----
